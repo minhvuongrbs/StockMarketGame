@@ -10,12 +10,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          StockLineChart(),
-          ControlButton(),
-        ],
+    return Scaffold(
+          body: Container(
+        child: Column(
+          children: <Widget>[
+            StockLineChart(),
+            ControlButton(),
+          ],
+        ),
       ),
     );
   }
