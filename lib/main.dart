@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:stock_market_game/src/widgets/home_screen.dart';
+import 'package:stock_market_game/src/widgets/custom_widget/app_state.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,8 +18,12 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Stock Market',
-      home: HomeScreen(),
+      home: ChangeNotifierProvider<AppState>(
+        builder: (_) => AppState(),
+        child: HomeScreen(),
+        )
       
     );
   }

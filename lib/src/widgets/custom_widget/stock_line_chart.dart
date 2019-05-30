@@ -1,8 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/src/text_element.dart';
+import 'app_state.dart';
 import 'package:charts_flutter/src/text_style.dart' as style;
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:provider/provider.dart';
+import 'data_type.dart';
 
 class StockLineChart extends StatefulWidget {
   @override
@@ -19,8 +22,8 @@ class _StockLineChartState extends State<StockLineChart>
   void initState() {
     super.initState();
     controller =
-        AnimationController(duration: const Duration(seconds: 10), vsync: this);
-    _datasize = IntTween(begin: 0, end: 6).animate(controller)
+        AnimationController(duration: const Duration(seconds: 4), vsync: this);
+    _datasize = IntTween(begin: 0, end: 11).animate(controller)
       ..addListener(() {
         setState(() {});
       });
@@ -48,46 +51,39 @@ class _StockLineChartState extends State<StockLineChart>
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context, listen: false);
     return Expanded(
-        child: charts.TimeSeriesChart(
-      _createSampleData(selectionData),
-      animate: false,
-      primaryMeasureAxis: new charts.NumericAxisSpec(
-          tickProviderSpec: charts.BasicNumericTickProviderSpec()),
-      customSeriesRenderers: [
-        charts.PointRendererConfig(
-          customRendererId: 'custom point',
-          symbolRenderer: CustomCircleSymbolRenderer(label: 'User'),
-        )
-      ],
-      selectionModels: [
-        charts.SelectionModelConfig(
-          changedListener: _onSelectionChanged,
-        )
-      ],
-      dateTimeFactory: const charts.LocalDateTimeFactory(),
-    ));
+      child: charts.TimeSeriesChart(
+        _createSampleData(appState),
+        animate: false,
+        primaryMeasureAxis: new charts.NumericAxisSpec(
+        tickProviderSpec: charts.BasicNumericTickProviderSpec()),
+        customSeriesRenderers: [
+      charts.PointRendererConfig(
+        customRendererId: 'custom point',
+        symbolRenderer: CustomCircleSymbolRenderer(label: 'User'),
+      )
+        ],
+        selectionModels: [
+      charts.SelectionModelConfig(
+        changedListener: _onSelectionChanged,
+      )
+        ],
+        dateTimeFactory: const charts.LocalDateTimeFactory(),
+      ),
+    );
   }
 
   List<charts.Series<TimeSeriesStocks, DateTime>> _createSampleData(
-      List<TimeSeriesStocks> selectionData) {
-    final data = [
-      new TimeSeriesStocks(new DateTime(2017, 9, 19), 5),
-      new TimeSeriesStocks(new DateTime(2017, 9, 26), 30),
-      new TimeSeriesStocks(new DateTime(2017, 10, 3), 110),
-      new TimeSeriesStocks(new DateTime(2017, 10, 10), 41),
-      new TimeSeriesStocks(new DateTime(2017, 10, 11), 75),
-      new TimeSeriesStocks(new DateTime(2017, 10, 12), 35),
-      new TimeSeriesStocks(new DateTime(2017, 10, 13), 12),
-    ];
-
+      AppState appState) {
+        final appStateSelectionData = Provider.of<AppState>(context);
     return [
       new charts.Series<TimeSeriesStocks, DateTime>(
         id: 'stock',
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
         domainFn: (TimeSeriesStocks stocks, _) => stocks.time,
         measureFn: (TimeSeriesStocks stocks, _) => stocks.stocks,
-        data: data.sublist(0, _datasize.value),
+        data: appState.getStockData(_datasize.value),
       ),
       new charts.Series<TimeSeriesStocks, DateTime>(
         id: 'select point',
@@ -96,7 +92,7 @@ class _StockLineChartState extends State<StockLineChart>
         strokeWidthPxFn: (_, __) => 2.0,
         domainFn: (TimeSeriesStocks stocks, _) => stocks.time,
         measureFn: (TimeSeriesStocks stocks, _) => stocks.stocks,
-        data: selectionData,
+        data: appStateSelectionData.getSelectionData(),
       )..setAttribute(charts.rendererIdKey, 'custom point')
     ];
   }
@@ -128,11 +124,4 @@ class CustomCircleSymbolRenderer extends charts.CircleSymbolRenderer {
         (bounds.left + bounds.width / 2 - label.length * 3.5).round(),
         (bounds.top - 28).round());
   }
-}
-
-class TimeSeriesStocks {
-  final DateTime time;
-  final int stocks;
-
-  TimeSeriesStocks(this.time, this.stocks);
 }
