@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/src/text_element.dart';
-import 'app_state.dart';
+import 'package:stock_market_game/src/models/time_series_stock.dart';
+import 'package:stock_market_game/src/providers/app_state.dart';
 import 'package:charts_flutter/src/text_style.dart' as style;
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:provider/provider.dart';
-import 'data_type.dart';
 
 class StockLineChart extends StatefulWidget {
   @override
