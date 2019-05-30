@@ -21,13 +21,15 @@ class _StockLineChartState extends State<StockLineChart>
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(duration: const Duration(seconds: 4), vsync: this);
+    controller = AnimationController(
+      duration: const Duration(seconds: 8),
+      vsync: this,
+    );
     _datasize = IntTween(begin: 0, end: 11).animate(controller)
       ..addListener(() {
         setState(() {});
       });
-    controller.forward();
+   controller.forward();
   }
 
   _onSelectionChanged(charts.SelectionModel model) {
@@ -51,23 +53,28 @@ class _StockLineChartState extends State<StockLineChart>
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context, listen: false);
+    final appState = Provider.of<AppState>(context, listen: true);
+    final diagramState = Provider.of<AppState>(context, listen: true);
+     // if (diagramState.isDiagramRunning)
+    
+    // else
+    //   controller.reset();
     return Expanded(
       child: charts.TimeSeriesChart(
         _createSampleData(appState),
         animate: false,
         primaryMeasureAxis: new charts.NumericAxisSpec(
-        tickProviderSpec: charts.BasicNumericTickProviderSpec()),
+            tickProviderSpec: charts.BasicNumericTickProviderSpec()),
         customSeriesRenderers: [
-      charts.PointRendererConfig(
-        customRendererId: 'custom point',
-        symbolRenderer: CustomCircleSymbolRenderer(label: 'User'),
-      )
+          charts.PointRendererConfig(
+            customRendererId: 'custom point',
+            symbolRenderer: CustomCircleSymbolRenderer(label: 'User'),
+          )
         ],
         selectionModels: [
-      charts.SelectionModelConfig(
-        changedListener: _onSelectionChanged,
-      )
+          charts.SelectionModelConfig(
+            changedListener: _onSelectionChanged,
+          )
         ],
         dateTimeFactory: const charts.LocalDateTimeFactory(),
       ),
@@ -76,7 +83,7 @@ class _StockLineChartState extends State<StockLineChart>
 
   List<charts.Series<TimeSeriesStocks, DateTime>> _createSampleData(
       AppState appState) {
-        final appStateSelectionData = Provider.of<AppState>(context);
+    final appStateSelectionData = Provider.of<AppState>(context);
     return [
       new charts.Series<TimeSeriesStocks, DateTime>(
         id: 'stock',

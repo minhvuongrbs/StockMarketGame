@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stock_market_game/src/providers/app_state.dart';
 
 class ControlButton extends StatefulWidget {
   @override
@@ -21,10 +23,14 @@ class _ControlButtonState extends State<ControlButton> {
   }
 
   Widget _startSection() {
+    final diagramState = Provider.of<AppState>(context, listen: true);
+    bool isRunning = diagramState.isDiagramRunning;
     return RaisedButton(
-      child: Text("Start"),
-      onPressed: () {},
-      color: Colors.green,
+      child: Text(isRunning ? "Reset" : "Start"),
+      onPressed: () {
+        diagramState.toggleDiagramRunning();
+      },
+      color: isRunning ? Colors.orange : Colors.green,
     );
   }
 
