@@ -11,10 +11,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-          body: Container(
+      body: Container(
         child: Column(
           children: <Widget>[
             StockLineChart(),
+            SizedBox(height: 20.0),
             ControlButton(),
           ],
         ),
